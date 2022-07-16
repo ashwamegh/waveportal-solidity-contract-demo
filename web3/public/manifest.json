@@ -1,0 +1,15 @@
+{
+  "short_name": "Wave Portal - ETH",
+  "name": "A web3 application to connect with Rinkeby test network on ethereum blockchain",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "96x96 64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000"
+}
