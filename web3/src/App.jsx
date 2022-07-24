@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 import abi from './utils/WavePortal.json';
 import './App.css';
@@ -82,22 +83,49 @@ function App() {
       if (checkMetaMask() && currentAccount && wavePortalContract) {
         let waveCount = await getTotalWaveCount();
         console.log("Reading total wave count at...", waveCount);
-
+        Swal.fire({
+          title: '🚀 Transaction in Progress',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        })
         // Code to wave from Smart Contract
         const waveTxn = await wavePortalContract.wave();
         console.log("Mining....", waveTxn.hash);
+        Swal.fire({
+          title: '👋 Miners are mining your wave...',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        })
         setWavingStatus("Miners are mining your wave...");
 
         await waveTxn.wait();
         console.log("Mined....", waveTxn.hash);
-        setWavingStatus(`Hey! You waved me at ${waveTxn.hash}, Thanks Pal 👍`);
-
-        setTimeout(() => setWavingStatus(false), 4000)
+        Swal.fire({
+          title: '🤑 Mined & Waved',
+          html: `Click hash to see your transaction: <a href="https://rinkeby.etherscan.io/tx/${waveTxn.hash}" target="_blank">${waveTxn.hash}</a>`,
+          type: 'success',
+          showConfirmButton: false,
+          showCloseButton: true
+        })
+        setWavingStatus(false);
 
         waveCount = await getTotalWaveCount();
         console.log("Retrieving total wave count....", waveCount);
       } else {
         console.log("Check MetaMask and Connect your wallet!");
+        Swal.fire({
+          title: "Wallet not Connected!",
+          text: "Check MetaMask and Connect your wallet!",
+          icon: 'warning',
+          showConfirmButton: false,
+          showCloseButton: true
+        })
       }
     } catch (error) {
       console.error(error)
@@ -124,35 +152,32 @@ function App() {
 
   return (
     <div className="App">
-      {wavingStatus && <WaveLoader wavingStatus={wavingStatus}></WaveLoader>}
-      <video style={{ width: 'auto', height: '100vh' }} autoPlay loop muted id="bg-video">
-        <source src="/man-door-animation.mp4" type="video/mp4" />
-      </video>
+      {/** wavingStatus && <WaveLoader wavingStatus={wavingStatus}></WaveLoader> **/}
       <main>
-        <aside>
-          <section>
-            <div style={{ fontSize: '3rem', marginBottom: '2rem' }}>
-              👋 Hey there!
-            </div>
+        <section id='app-info'>
+          <div style={{ fontSize: '3rem', marginBottom: '2rem' }}>
+            👋 Hey there!
+          </div>
 
-            <div style={{ fontSize: '2rem', width: '20rem', marginBottom: '2rem' }}>
-              I am ashwamegh, The Flying Horse!
-              Would you like to wave at me{totalWaveCounts > 0 ? <span>, along with <span>{totalWaveCounts}</span> wavers!</span> : '!'}
-            </div>
+          <div style={{ fontSize: '2rem', marginBottom: '2rem' }}>
+            I am ashwamegh, The Flying Horse!
+            Would you like to wave at me{totalWaveCounts > 0 ? <span>, along with <span>{totalWaveCounts}</span> wavers!</span> : '!'}
+          </div>
 
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             {
               !currentAccount &&
-              <button style={{ marginRight: '1rem', padding: '1rem', color: '#fff', background: '#000', outline: 'none', fontSize: '1.5rem' }} onClick={connectWallet}>
+              <button onClick={connectWallet}>
                 Connect Wallet
               </button>
             }
 
-            <button style={{ padding: '1rem', color: '#fff', background: '#000', outline: 'none', fontSize: '1.5rem' }} onClick={wave}>
+            <button onClick={wave}>
               {wavingStatus ? 'waving...' : 'Wave at Me'}
             </button>
+          </div>
 
-          </section>
-        </aside>
+        </section>
       </main>
     </div>
   );
@@ -162,9 +187,9 @@ function WaveLoader({ wavingStatus }) {
   return (
     <div
       style={{ fontSize: '3rem', position: 'absolute', zIndex: 10, height: '100vh', width: '100%', backgroundColor: 'rgb(240 255 255 / 90%)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-      <span class="wave">👋</span>
+      <span className="wave">👋</span>
       <span style={{ padding: '3rem' }}>{wavingStatus}</span>
-    </div>
+    </div >
   )
 }
 
