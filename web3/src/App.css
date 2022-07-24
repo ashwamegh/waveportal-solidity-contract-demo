@@ -29,10 +29,12 @@ section#app-info button {
   font-family: 'Fira Mono', monospace;
   padding: 1rem;
   outline: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   background: #e0e0e0;
   box-shadow:  20px 20px 60px #bebebe,
                -20px -20px 60px #ffffff;
+  font-weight: 500;
+  color: #ff6300;
 }
 
 section#app-info button:hover {

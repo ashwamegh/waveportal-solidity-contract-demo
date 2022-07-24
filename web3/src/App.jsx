@@ -152,10 +152,9 @@ function App() {
 
   return (
     <div className="App">
-      {/** wavingStatus && <WaveLoader wavingStatus={wavingStatus}></WaveLoader> **/}
       <main>
         <section id='app-info'>
-          <div style={{ fontSize: '3rem', marginBottom: '2rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '2rem', fontWeight: 700 }}>
             👋 Hey there!
           </div>
 
@@ -173,7 +172,7 @@ function App() {
             }
 
             <button onClick={wave}>
-              {wavingStatus ? 'waving...' : 'Wave at Me'}
+              {wavingStatus ? 'waving...' : 'Wave'}
             </button>
           </div>
 
@@ -181,16 +180,6 @@ function App() {
       </main>
     </div>
   );
-}
-
-function WaveLoader({ wavingStatus }) {
-  return (
-    <div
-      style={{ fontSize: '3rem', position: 'absolute', zIndex: 10, height: '100vh', width: '100%', backgroundColor: 'rgb(240 255 255 / 90%)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-      <span className="wave">👋</span>
-      <span style={{ padding: '3rem' }}>{wavingStatus}</span>
-    </div >
-  )
 }
 
 export default App;
