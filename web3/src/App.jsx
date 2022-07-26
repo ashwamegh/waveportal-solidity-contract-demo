@@ -10,9 +10,10 @@ function App() {
   const [wavePortalContract, setWavePortalContract] = useState(null);
   const [totalWaveCounts, setTotalWaveCounts] = useState(0);
   const [wavingStatus, setWavingStatus] = useState(false);
+  const [allWaves, setAllWaves] = useState([]);
 
   // WavePortal Contract Address
-  const contractAddress = '0x63c5e05E889548917d360c9C08c63987B740B72D';
+  const contractAddress = '0x05617cB6f00E149320eE4ab424F78eAD9Cad0bA7';
 
   // Reference contents of the contract abi
   const { abi: contractABI } = abi
@@ -69,6 +70,32 @@ function App() {
     }
   }
 
+  const getAllWaves = async () => {
+    if (wavePortalContract) {
+      const waves = await wavePortalContract.getAllWaves();
+
+      /*
+      * We only need address, timestamp, and message in our UI so let's
+      * pick those out
+      */
+      const wavesCleaned = [];
+      waves.forEach(wave => {
+        wavesCleaned.push({
+          address: wave.waver,
+          timestamp: new Date(wave.timestamp * 1000),
+          message: wave.message
+        });
+      });
+
+      console.log(wavesCleaned);
+
+      setAllWaves(wavesCleaned);
+      return true;
+    } else {
+      return 0;
+    }
+  }
+
   const getTotalWaveCount = async () => {
     if (wavePortalContract) {
       const totalWaveCount = await wavePortalContract.getTotalWaves();
@@ -81,6 +108,26 @@ function App() {
   const wave = async () => {
     try {
       if (checkMetaMask() && currentAccount && wavePortalContract) {
+        const { value: message } = await Swal.fire({
+          title: "Add your Message 🔥",
+          text: "Write something interesting, use emojis too:",
+          input: 'text',
+          showCancelButton: true,
+          confirmButtonText: 'Hit it 👋',
+          cancelButtonText: 'Make me sad!'
+        });
+
+        if (!message) {
+          Swal.fire({
+            title: "Made me sad 😞",
+            text: "Please enter your message to send waves!",
+            icon: 'warning',
+            showConfirmButton: false,
+            showCloseButton: true
+          })
+          return;
+        }
+
         let waveCount = await getTotalWaveCount();
         console.log("Reading total wave count at...", waveCount);
         Swal.fire({
@@ -92,7 +139,7 @@ function App() {
           }
         })
         // Code to wave from Smart Contract
-        const waveTxn = await wavePortalContract.wave();
+        const waveTxn = await wavePortalContract.wave(message);
         console.log("Mining....", waveTxn.hash);
         Swal.fire({
           title: '👋 Miners are mining your wave...',
@@ -117,6 +164,7 @@ function App() {
 
         waveCount = await getTotalWaveCount();
         console.log("Retrieving total wave count....", waveCount);
+        getAllWaves();
       } else {
         console.log("Check MetaMask and Connect your wallet!");
         Swal.fire({
@@ -148,12 +196,12 @@ function App() {
   useEffect(() => { runEffect() }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { getTotalWaveCount() }, [wavePortalContract])
+  useEffect(() => { getTotalWaveCount(); getAllWaves(); }, [wavePortalContract])
 
   return (
     <div className="App">
       <main>
-        <section id='app-info'>
+        <section className='app-info'>
           <div style={{ fontSize: '3rem', marginBottom: '2rem', fontWeight: 700 }}>
             👋 Hey there!
           </div>
@@ -166,7 +214,7 @@ function App() {
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             {
               !currentAccount &&
-              <button onClick={connectWallet}>
+              <button style={{ fontSize: '1.5rem' }} onClick={connectWallet}>
                 Connect Wallet
               </button>
             }
@@ -177,6 +225,18 @@ function App() {
           </div>
 
         </section>
+
+
+        {allWaves.length > 0 && <section className='app-info'>
+          {allWaves.map((wave, index) => {
+            return (
+              <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+                <div>Address: {wave.address}</div>
+                <div>Time: {wave.timestamp.toString()}</div>
+                <div>Message: {wave.message}</div>
+              </div>)
+          })}
+        </section>}
       </main>
     </div>
   );

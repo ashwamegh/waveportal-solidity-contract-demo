@@ -3,11 +3,13 @@ main {
   height: 100%;
   min-height: calc(100vh - 4rem);
   display: flex;
-  justify-content: center;
   padding-top: 4rem;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
 }
 
-section#app-info {
+.app-info {
   padding: 3rem 2rem;
   border-radius: 10px;
   color: #000;
@@ -15,9 +17,10 @@ section#app-info {
   text-align: center;
   height: max-content;
   box-shadow: 0px 3px 3px #ff6300, -21px -4px 15px #eee,21px -4px 15px #eee;
+  margin: 0.5rem 0;
 }
 
-section#app-info button {
+.app-info button {
   border-radius: 100%;
   height: 150px;
   width: 150px;
@@ -37,7 +40,7 @@ section#app-info button {
   color: #ff6300;
 }
 
-section#app-info button:hover {
+.app-info button:hover {
   transform: scale(1.1);
 }
 

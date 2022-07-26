@@ -28,4 +28,5 @@ module.exports = {
   }
 };
 
-// WavePortal Contract address on Rinkeby : 0x63c5e05E889548917d360c9C08c63987B740B72D
+// Version - 1 WavePortal Contract address on Rinkeby : 0x63c5e05E889548917d360c9C08c63987B740B72D
+// Version - 2 WavePortal Contract address on Rinkeby : 0x05617cB6f00E149320eE4ab424F78eAD9Cad0bA7

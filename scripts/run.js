@@ -1,42 +1,37 @@
 const main = async () => {
-	const [owner, randomPerson] = await hre.ethers.getSigners();
+	const [_, randomPerson] = await hre.ethers.getSigners();
 	const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
 	const waveContract = await waveContractFactory.deploy();
 	await waveContract.deployed();
 
 	console.log("WaveContract deployed to: ", waveContract.address);
-	console.log("WaveContract deployed by: ", owner.address);
+	console.log("WaveContract deployed by: ", _.address);
 
 	let waveCount;
 	waveCount = await waveContract.getTotalWaves();
 
-	let waveTxn = await waveContract.wave();
+	let waveTxn = await waveContract.wave("Hi buddy!");
 	await waveTxn.wait();
 	console.log("Our wave has been stored at: ", waveTxn.hash)
 	waveCount = await waveContract.getTotalWaves();
 
-	waveTxn = await waveContract.connect(randomPerson).wave();
+	waveTxn = await waveContract.connect(randomPerson).wave("Hello Bro!");
 	await waveTxn.wait();
 	console.log("Our wave has been stored at: ", waveTxn.hash)
 	waveCount = await waveContract.getTotalWaves();
 
-	waveTxn = await waveContract.connect(randomPerson).wave();
+	waveTxn = await waveContract.connect(randomPerson).wave("Hola Amigo!");
 	await waveTxn.wait();
 	console.log("Our wave has been stored at: ", waveTxn.hash)
 	waveCount = await waveContract.getTotalWaves();
 
-	waveTxn = await waveContract.wave();
+	waveTxn = await waveContract.wave("What's up mate!");
 	await waveTxn.wait()
-	console.log(`Our wave contract is deployed at ${waveTxn.hash} by User ${randomPerson.address}`);
 	waveCount = await waveContract.getTotalWaves();
+	console.log(`Updated wave count, after waving us is ${waveCount}`);
 
-
-	waveTxn = await waveContract.connect(randomPerson).unwave();
-	await waveTxn.wait();
-	console.log(`The unwave transaction is store at ${waveTxn.hash}`)
-	waveCount = await waveContract.getTotalWaves();
-	console.log(`Updated wave count, after unwaving us is ${waveCount}`);
-
+	let allWaves = await waveContract.getAllWaves();
+	console.log(allWaves);
 }
 
 const runMain = async () => {
