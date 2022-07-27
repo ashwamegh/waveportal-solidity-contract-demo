@@ -63,3 +63,31 @@ main {
    60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
   100% { transform: rotate( 0.0deg) }
 }
+
+.message-wrapper {
+  border-radius: 10px;
+  background: #e0e0e0;
+  box-shadow:  20px 20px 60px #bebebe,
+               -20px -20px 60px #ffffff;
+}
+
+.app-info.messages {
+  text-align: left;
+}
+
+.message-tags {
+  padding: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.message-tag {
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0 0.5rem;
+}
+
+.message-tag-data {
+
+  border-radius: 10px;
+  padding: 0 0.5rem;
+}

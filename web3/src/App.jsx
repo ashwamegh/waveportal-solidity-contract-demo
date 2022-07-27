@@ -87,7 +87,8 @@ function App() {
         });
       });
 
-      console.log(wavesCleaned);
+      // set the position for messages with latest entry
+      wavesCleaned.reverse();
 
       setAllWaves(wavesCleaned);
       return true;
@@ -151,7 +152,8 @@ function App() {
         })
         setWavingStatus("Miners are mining your wave...");
 
-        await waveTxn.wait();
+        const data = await waveTxn.wait();
+        console.log(data)
         console.log("Mined....", waveTxn.hash);
         Swal.fire({
           title: '🤑 Mined & Waved',
@@ -227,13 +229,13 @@ function App() {
         </section>
 
 
-        {allWaves.length > 0 && <section className='app-info'>
+        {allWaves.length > 0 && <section className='app-info messages'>
           {allWaves.map((wave, index) => {
             return (
-              <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
-                <div>Address: {wave.address}</div>
-                <div>Time: {wave.timestamp.toString()}</div>
-                <div>Message: {wave.message}</div>
+              <div className='message-wrapper' key={index} style={{ marginTop: "2rem", padding: "0.5rem" }}>
+                <div className='message-tags'><span className='message-tag'>Address:</span> <span className='message-tag-data'>{wave.address}</span></div>
+                <div className='message-tags'><span className='message-tag'>Time:</span> <span className='message-tag-data'>{wave.timestamp.toString()}</span></div>
+                <div className='message-tags'><span className='message-tag'>Message:</span> <span className='message-tag-data'>{wave.message}</span></div>
               </div>)
           })}
         </section>}
