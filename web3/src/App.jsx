@@ -1,9 +1,10 @@
-import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
-import Swal from 'sweetalert2';
+import { ethers } from "ethers";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { AvatarGenerator } from "random-avatar-generator";
 
-import abi from './utils/WavePortal.json';
-import './App.css';
+import abi from "./utils/WavePortal.json";
+import "./App.css";
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -11,12 +12,15 @@ function App() {
   const [totalWaveCounts, setTotalWaveCounts] = useState(0);
   const [wavingStatus, setWavingStatus] = useState(false);
   const [allWaves, setAllWaves] = useState([]);
+  const [message, setMessage] = useState('');
+
+  const generator = new AvatarGenerator();
 
   // WavePortal Contract Address
-  const contractAddress = '0x05617cB6f00E149320eE4ab424F78eAD9Cad0bA7';
+  const contractAddress = "0xb4e699d885345CC96686fC42e2b9e543c66Af10B";
 
   // Reference contents of the contract abi
-  const { abi: contractABI } = abi
+  const { abi: contractABI } = abi;
 
   const checkMetaMask = () => {
     const { ethereum } = window;
@@ -26,9 +30,9 @@ function App() {
       return true;
     } else {
       console.log("Please make sure, you have MetaMask!");
-      return false
+      return false;
     }
-  }
+  };
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -37,53 +41,54 @@ function App() {
         const accounts = await ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0) {
           const account = accounts[0];
-          setCurrentAccount(account)
-          console.log("Found an authorized account: ", account)
+          setCurrentAccount(account);
+          console.log("Found an authorized account: ", account);
           return true;
         } else {
-          console.log("No authorized account found!")
+          console.log("No authorized account found!");
           return false;
         }
       }
-
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
       if (checkMetaMask()) {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await ethereum.request({
+          method: "eth_requestAccounts",
+        });
 
         if (accounts.length > 0) {
           const account = accounts[0];
-          setCurrentAccount(account)
+          setCurrentAccount(account);
           console.log("Account connected: ", account);
         } else {
-          console.log("Failed connecting account")
+          console.log("Failed connecting account");
         }
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const getAllWaves = async () => {
     if (wavePortalContract) {
       const waves = await wavePortalContract.getAllWaves();
 
       /*
-      * We only need address, timestamp, and message in our UI so let's
-      * pick those out
-      */
+       * We only need address, timestamp, and message in our UI so let's
+       * pick those out
+       */
       const wavesCleaned = [];
-      waves.forEach(wave => {
+      waves.forEach((wave) => {
         wavesCleaned.push({
           address: wave.waver,
           timestamp: new Date(wave.timestamp * 1000),
-          message: wave.message
+          message: wave.message,
         });
       });
 
@@ -95,73 +100,66 @@ function App() {
     } else {
       return 0;
     }
-  }
+  };
 
   const getTotalWaveCount = async () => {
     if (wavePortalContract) {
       const totalWaveCount = await wavePortalContract.getTotalWaves();
       const totalWaveCountNumber = totalWaveCount.toNumber();
       setTotalWaveCounts(totalWaveCountNumber);
-      return totalWaveCountNumber
+      return totalWaveCountNumber;
     } else return 0;
-  }
+  };
 
-  const wave = async () => {
+  const wave = async (event) => {
+    event.preventDefault()
+
     try {
       if (checkMetaMask() && currentAccount && wavePortalContract) {
-        const { value: message } = await Swal.fire({
-          title: "Add your Message 🔥",
-          text: "Write something interesting, use emojis too:",
-          input: 'text',
-          showCancelButton: true,
-          confirmButtonText: 'Hit it 👋',
-          cancelButtonText: 'Make me sad!'
-        });
-
         if (!message) {
           Swal.fire({
             title: "Made me sad 😞",
             text: "Please enter your message to send waves!",
-            icon: 'warning',
+            icon: "warning",
             showConfirmButton: false,
-            showCloseButton: true
-          })
+            showCloseButton: true,
+          });
           return;
         }
 
         let waveCount = await getTotalWaveCount();
         console.log("Reading total wave count at...", waveCount);
         Swal.fire({
-          title: '🚀 Transaction in Progress',
+          title: "🚀 Transaction in Progress",
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
-          }
-        })
+          },
+        });
         // Code to wave from Smart Contract
         const waveTxn = await wavePortalContract.wave(message);
         console.log("Mining....", waveTxn.hash);
         Swal.fire({
-          title: '👋 Miners are mining your wave...',
+          title: "👋 Miners are mining your wave...",
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
-          }
-        })
+          },
+        });
         setWavingStatus("Miners are mining your wave...");
 
         const data = await waveTxn.wait();
-        console.log(data)
+        console.log(data);
         console.log("Mined....", waveTxn.hash);
         Swal.fire({
-          title: '🤑 Mined & Waved',
+          title: "🤑 Mined & Waved",
           html: `Click hash to see your transaction: <a href="https://rinkeby.etherscan.io/tx/${waveTxn.hash}" target="_blank">${waveTxn.hash}</a>`,
-          type: 'success',
+          type: "success",
           showConfirmButton: false,
-          showCloseButton: true
-        })
+          showCloseButton: true,
+        });
         setWavingStatus(false);
 
         waveCount = await getTotalWaveCount();
@@ -172,15 +170,24 @@ function App() {
         Swal.fire({
           title: "Wallet not Connected!",
           text: "Check MetaMask and Connect your wallet!",
-          icon: 'warning',
+          icon: "warning",
           showConfirmButton: false,
-          showCloseButton: true
-        })
+          showCloseButton: true,
+        });
       }
     } catch (error) {
-      console.error(error)
+      if (error.reason) {
+        Swal.fire({
+          title: "Oops 🤐",
+          text: error.reason.split(":")[1].trim(),
+          icon: "error",
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      }
+      console.error(error);
     }
-  }
+  };
 
   const runEffect = async () => {
     const isWalletConnected = await checkIfWalletIsConnected();
@@ -188,57 +195,93 @@ function App() {
       const { ethereum } = window;
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
       setWavePortalContract(contract);
     }
     return true;
-  }
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { runEffect() }, []);
+  useEffect(() => {
+    runEffect();
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { getTotalWaveCount(); getAllWaves(); }, [wavePortalContract])
+  useEffect(() => {
+    getTotalWaveCount();
+    getAllWaves();
+  }, [wavePortalContract]);
 
   return (
     <div className="App">
       <main>
-        <section className='app-info'>
-          <div style={{ fontSize: '3rem', marginBottom: '2rem', fontWeight: 700 }}>
-            👋 Hey there!
-          </div>
-
-          <div style={{ fontSize: '2rem', marginBottom: '2rem' }}>
-            I am ashwamegh, The Flying Horse!
-            Would you like to wave at me{totalWaveCounts > 0 ? <span>, along with <span>{totalWaveCounts}</span> wavers!</span> : '!'}
-          </div>
-
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            {
-              !currentAccount &&
-              <button style={{ fontSize: '1.5rem' }} onClick={connectWallet}>
-                Connect Wallet
+        <form onSubmit={wave} className="wave-editor">
+          <textarea
+            name="wave-message"
+            cols="63"
+            rows="10"
+            placeholder={`👋 Hey there, I am Ashwamegh!! Would you like to wave at me${totalWaveCounts > 0
+              ? ", along with " + totalWaveCounts + " waver(s)!"
+              : "!"
+              }`}
+            onChange={(event) => setMessage(event.target.value)}
+          ></textarea>
+          <div
+            style={{ display: "flex", justifyContent: "end", padding: "1rem" }}
+          >
+            <div>
+              {!currentAccount && (
+                <button type="primary" onClick={connectWallet}>Connect 💰</button>
+              )}
+              <button type="submit" onClick={wave}>
+                {wavingStatus ? "waving..." : "Wave"}
               </button>
-            }
-
-            <button onClick={wave}>
-              {wavingStatus ? 'waving...' : 'Wave'}
-            </button>
+            </div>
           </div>
+        </form>
 
-        </section>
-
-
-        {allWaves.length > 0 && <section className='app-info messages'>
-          {allWaves.map((wave, index) => {
-            return (
-              <div className='message-wrapper' key={index} style={{ marginTop: "2rem", padding: "0.5rem" }}>
-                <div className='message-tags'><span className='message-tag'>Address:</span> <span className='message-tag-data'>{wave.address}</span></div>
-                <div className='message-tags'><span className='message-tag'>Time:</span> <span className='message-tag-data'>{wave.timestamp.toString()}</span></div>
-                <div className='message-tags'><span className='message-tag'>Message:</span> <span className='message-tag-data'>{wave.message}</span></div>
-              </div>)
-          })}
-        </section>}
+        {allWaves.length > 0 && (
+          <section className="app-info messages">
+            {allWaves.map((wave, index) => {
+              return (
+                <div
+                  className="message-wrapper"
+                  key={index}
+                  style={{ marginTop: "2rem", padding: "0.5rem" }}
+                >
+                  <figure>
+                    <img
+                      src={generator.generateRandomAvatar()}
+                      alt="Random Avatar"
+                    />
+                  </figure>
+                  <div style={{ width: '100%' }}>
+                    <div className="message-tags">
+                      <span className="message-tag">Address:</span>{" "}
+                      <span className="message-tag-data">{wave.address}</span>
+                    </div>
+                    <div className="message-tags">
+                      <span className="message-tag">Message:</span>{" "}
+                      <span className="message-tag-data">{wave.message}</span>
+                    </div>
+                    <div
+                      className="message-tags"
+                      style={{ display: "flex", justifyContent: "end", fontSize: '0.75rem', color: '#525252' }}
+                    >
+                      <span className="message-tag-data">
+                        {wave.timestamp.toLocaleString()} 📅
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        )}
       </main>
     </div>
   );
