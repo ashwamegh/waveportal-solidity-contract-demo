@@ -118,8 +118,8 @@ function App() {
       if (checkMetaMask() && currentAccount && wavePortalContract) {
         if (!message) {
           Swal.fire({
-            title: "Made me sad 😞",
-            text: "Please enter your message to send waves!",
+            title: "Please enter your message to send waves 😞",
+            html: '<iframe src="https://giphy.com/embed/7VHV66bRjGRSo" width="480" height="279" frameBorder="0"></iframe>',
             icon: "warning",
             showConfirmButton: false,
             showCloseButton: true,
@@ -131,6 +131,7 @@ function App() {
         console.log("Reading total wave count at...", waveCount);
         Swal.fire({
           title: "🚀 Transaction in Progress",
+          html: '<iframe src="https://giphy.com/embed/T3Bs3vgaoUoH9Pdqs0" width="480" height="480" frameBorder="0"></iframe>',
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
@@ -141,7 +142,8 @@ function App() {
         const waveTxn = await wavePortalContract.wave(message);
         console.log("Mining....", waveTxn.hash);
         Swal.fire({
-          title: "👋 Miners are mining your wave...",
+          title: "Mining in Progress...",
+          html: '<iframe src="https://giphy.com/embed/5C3Zrs5xUg5fHV4Kcf" width="480" height="480" frameBorder="0"></iframe>',
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
@@ -155,7 +157,7 @@ function App() {
         console.log("Mined....", waveTxn.hash);
         Swal.fire({
           title: "🤑 Mined & Waved",
-          html: `Click hash to see your transaction: <a href="https://rinkeby.etherscan.io/tx/${waveTxn.hash}" target="_blank">${waveTxn.hash}</a>`,
+          html: `Click hash to see your transaction: <a href="https://rinkeby.etherscan.io/tx/${waveTxn.hash}" target="_blank">${waveTxn.hash}</a><br><br><iframe src="https://giphy.com/embed/b5L1Lt3k4hGNDZWVIw" width="480" height="269" frameBorder="0"></iframe>`,
           type: "success",
           showConfirmButton: false,
           showCloseButton: true,
@@ -169,7 +171,7 @@ function App() {
         console.log("Check MetaMask and Connect your wallet!");
         Swal.fire({
           title: "Wallet not Connected!",
-          text: "Check MetaMask and Connect your wallet!",
+          html: 'Check MetaMask and Connect your wallet! <br><br><iframe src="https://giphy.com/embed/gmslqIqkiMbgrvBqhZ" width="480" height="270" frameBorder="0"></iframe>',
           icon: "warning",
           showConfirmButton: false,
           showCloseButton: true,
@@ -179,7 +181,7 @@ function App() {
       if (error.reason) {
         Swal.fire({
           title: "Oops 🤐",
-          text: error.reason.split(":")[1].trim(),
+          html: `${error.reason.split(":")[1].trim()} <br><br> <iframe src="https://giphy.com/embed/3ohzdYJK1wAdPWVk88" width="480" height="270" frameBorder="0"></iframe>`,
           icon: "error",
           showConfirmButton: false,
           showCloseButton: true,
