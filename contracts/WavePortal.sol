@@ -6,6 +6,7 @@ import "hardhat/console.sol";
 
 contract WavePortal {
     uint256 totalWaves;
+    uint256 private seed;
 
     /**
         This is a solidity event which will emit the new waves with the details needed
@@ -28,7 +29,10 @@ contract WavePortal {
      */
     Wave[] waves;
 
-    constructor() {
+    mapping(address => uint256) public lastWavedAt;
+
+    constructor() payable {
+        seed = (block.timestamp + block.difficulty) % 100;
         console.log("Taking you inside WavePortal contract");
     }
 
@@ -36,11 +40,40 @@ contract WavePortal {
      * This function requires a message to be sent by the user who are invoking this
      */
     function wave(string memory _message) public {
+        /** Add a logic to make sure the Waver only waves once in every minute
+         */
+        require(
+            lastWavedAt[msg.sender] + 1 minutes < block.timestamp,
+            "Please wait 1 min to wave"
+        );
+
+        lastWavedAt[msg.sender] = block.timestamp;
+
         totalWaves += 1;
         console.log("%s has waved us w/ message %s", msg.sender, _message);
 
         // Pushing the new wave inside our waves []
         waves.push(Wave(msg.sender, _message, block.timestamp));
+
+        seed = (block.timestamp + block.difficulty + seed) % 100;
+        console.log("Randpm # generated: %d", seed);
+
+        /** Create a 50% chance for the user to win ether
+         */
+        if (seed < 50) {
+            console.log("%s won!", msg.sender);
+            uint256 prizeAmount = 0.0001 ether;
+
+            // Check if the prize amount is more than the contract's balance
+            require(
+                prizeAmount <= address(this).balance,
+                "Trying to withdraw more money than the contract has."
+            );
+
+            // Check if the prize amount transfer was successful or not.
+            (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+            require(success, "Failed to withdraw moeny from the contract");
+        }
 
         emit NewWave(msg.sender, block.timestamp, _message);
     }

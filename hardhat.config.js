@@ -30,3 +30,6 @@ module.exports = {
 
 // Version - 1 WavePortal Contract address on Rinkeby : 0x63c5e05E889548917d360c9C08c63987B740B72D
 // Version - 2 WavePortal Contract address on Rinkeby : 0x05617cB6f00E149320eE4ab424F78eAD9Cad0bA7
+// Version - 3 WavePortal Contract address on Rinkeby : 0xb84bA87fa9241E40c4F5AeEeEffFFAa651FB82d8
+// Version - 4 WavePortal Contract address on Rinkeby : 0x413b28e594B650f7101e995da5Bf0E040F976077
+// Version - 5 WavePortal Contract address on Rinkeby : 0xb4e699d885345CC96686fC42e2b9e543c66Af10B
