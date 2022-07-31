@@ -7,6 +7,7 @@ import abi from "./utils/WavePortal.json";
 import "./App.css";
 
 function App() {
+  const [theme, setTheme] = useState(useThemeDetector() ? 'dark' : 'light');
   const [currentAccount, setCurrentAccount] = useState(null);
   const [wavePortalContract, setWavePortalContract] = useState(null);
   const [totalWaveCounts, setTotalWaveCounts] = useState(0);
@@ -131,7 +132,7 @@ function App() {
         console.log("Reading total wave count at...", waveCount);
         Swal.fire({
           title: "🚀 Transaction in Progress",
-          html: '<iframe src="https://giphy.com/embed/T3Bs3vgaoUoH9Pdqs0" width="480" height="480" frameBorder="0"></iframe>',
+          html: '<iframe src="https://giphy.com/embed/5C3Zrs5xUg5fHV4Kcf" width="480" height="480" frameBorder="0"></iframe>',
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
@@ -139,11 +140,11 @@ function App() {
           },
         });
         // Code to wave from Smart Contract
-        const waveTxn = await wavePortalContract.wave(message);
+        const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 }); //here we are a;lso setting a fixed amount of gas, rest will be refunded, if not used
         console.log("Mining....", waveTxn.hash);
         Swal.fire({
           title: "Mining in Progress...",
-          html: '<iframe src="https://giphy.com/embed/5C3Zrs5xUg5fHV4Kcf" width="480" height="480" frameBorder="0"></iframe>',
+          html: '<iframe src="https://giphy.com/embed/T3Bs3vgaoUoH9Pdqs0" width="480" height="480" frameBorder="0"></iframe>',
           allowEscapeKey: false,
           allowOutsideClick: false,
           didOpen: () => {
@@ -163,10 +164,10 @@ function App() {
           showCloseButton: true,
         });
         setWavingStatus(false);
+        setMessage('');
 
         waveCount = await getTotalWaveCount();
         console.log("Retrieving total wave count....", waveCount);
-        getAllWaves();
       } else {
         console.log("Check MetaMask and Connect your wallet!");
         Swal.fire({
@@ -204,7 +205,6 @@ function App() {
       );
       setWavePortalContract(contract);
     }
-    return true;
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -214,16 +214,59 @@ function App() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    const onNewWave = (from, timestamp, message) => {
+      setAllWaves([
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message
+        },
+        ...allWaves,
+      ]);
+    }
+
     getTotalWaveCount();
     getAllWaves();
-  }, [wavePortalContract]);
+
+    if (wavePortalContract) {
+      wavePortalContract.on("NewWave", onNewWave)
+    }
+
+    return (() => {
+      if (wavePortalContract) {
+        wavePortalContract.off('NewWave')
+      }
+    })
+  }, [wavePortalContract, allWaves]);
 
   return (
     <div className="App">
-      <main>
+      <header className={theme}>
+        <nav style={{ width: '100%', padding: '4rem 2rem', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+          <div style={{ display: 'flex' }}>
+            <div class="spinner">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <h1 style={{ marginLeft: '2rem' }}>WavePortal.eth</h1>
+          </div>
+          <div style={{ fontSize: '2.5rem' }}>
+            <label className="switch">
+              <input checked={theme === 'light'} type="checkbox" onChange={(ev) => ev.target.checked ? setTheme('light') : setTheme('dark')} />
+              <span className="slider"></span>
+            </label>
+          </div>
+        </nav>
+      </header>
+      <main className={theme}>
         <form onSubmit={wave} className="wave-editor">
           <textarea
             name="wave-message"
+            value={message}
             cols="63"
             rows="10"
             placeholder={`👋 Hey there, I am Ashwamegh!! Would you like to wave at me${totalWaveCounts > 0
@@ -285,8 +328,23 @@ function App() {
           </section>
         )}
       </main>
-    </div>
+    </div >
   );
+}
+
+const useThemeDetector = () => {
+  const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());
+  const mqListener = (e => {
+    setIsDarkTheme(e.matches);
+  });
+
+  useEffect(() => {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    darkThemeMq.addListener(mqListener);
+    return () => darkThemeMq.removeListener(mqListener);
+  }, []);
+  return isDarkTheme;
 }
 
 export default App;
