@@ -18,31 +18,31 @@ main {
   max-width: 75%;
   text-align: center;
   height: max-content;
-  box-shadow: 0px 3px 3px #ff6300, -21px -4px 15px #eee,21px -4px 15px #eee;
+  box-shadow: 0px 3px 3px #ff6300, -21px -4px 15px #eee, 21px -4px 15px #eee;
   margin: 0.5rem 0;
 }
 
 @media screen and (min-width: 1367px) {
   .app-info,
-.wave-editor {
-  min-width: 65%;
-  max-width: 972px;
+  .wave-editor {
+    min-width: 65%;
+    max-width: 972px;
   }
 }
 
 @media screen and (max-width: 1366px) {
   .app-info,
-.wave-editor {
-  min-width: 75%;
-  max-width: 90%;
+  .wave-editor {
+    min-width: 75%;
+    max-width: 90%;
   }
 }
 
 @media screen and (max-width: 767px) {
   .app-info,
-.wave-editor {
-  min-width: 75%;
-  max-width: 98%;
+  .wave-editor {
+    min-width: 75%;
+    max-width: 98%;
   }
 }
 
@@ -71,8 +71,7 @@ main {
   padding: 1rem;
   outline: none;
   background: #e0e0e0;
-  box-shadow:  20px 20px 60px #bebebe,
-               -20px -20px 60px #ffffff;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
   font-weight: 600;
   color: #ff6300;
   font-size: 1.25rem;
@@ -83,30 +82,45 @@ main {
 }
 
 .wave {
-  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
-  animation-duration: 2.5s;        /* Change to speed up or slow down */
-  animation-iteration-count: infinite;  /* Never stop waving :) */
-  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  animation-name: wave-animation; /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s; /* Change to speed up or slow down */
+  animation-iteration-count: infinite; /* Never stop waving :) */
+  transform-origin: 70% 70%; /* Pivot around the bottom-left palm */
   display: inline-block;
   font-size: 9rem;
 }
 
 @keyframes wave-animation {
-    0% { transform: rotate( 0.0deg) }
-   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
-   20% { transform: rotate(-8.0deg) }
-   30% { transform: rotate(14.0deg) }
-   40% { transform: rotate(-4.0deg) }
-   50% { transform: rotate(10.0deg) }
-   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
-  100% { transform: rotate( 0.0deg) }
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  } /* The following five values can be played with to make the waving more or less extreme */
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  } /* Reset for the last half to pause */
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .message-wrapper {
   border-radius: 10px;
   background-color: #f0f8ff;
-  box-shadow:  20px 20px 60px #bebebe,
-               -20px -20px 60px #ffffff;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
   display: flex;
 }
 
@@ -146,7 +160,137 @@ main {
 }
 
 .message-tag-data {
-
   border-radius: 10px;
   padding: 0 0.5rem;
+}
+
+/* From uiverse.io by @alexruix */
+/* The switch - the box around the slider */
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  --background: #28096b;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background);
+  transition: 0.5s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 50%;
+  left: 10%;
+  bottom: 15%;
+  box-shadow: inset 8px -4px 0px 0px #fff000;
+  background: var(--background);
+  transition: 0.5s;
+}
+
+input:checked + .slider {
+  background-color: #522ba7;
+}
+
+input:checked + .slider:before {
+  transform: translateX(100%);
+  box-shadow: inset 15px -4px 0px 15px #fff000;
+}
+
+/* From uiverse.io by @AqFox */
+.spinner {
+  width: 44px;
+  height: 44px;
+  animation: spinner-y0fdc1 2s infinite ease;
+  transform-style: preserve-3d;
+}
+
+.spinner > div {
+  background-color: rgba(0, 77, 255, 0.2);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  border: 2px solid #004dff;
+}
+
+.spinner div:nth-of-type(1) {
+  transform: translateZ(-22px) rotateY(180deg);
+}
+
+.spinner div:nth-of-type(2) {
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
+}
+
+.spinner div:nth-of-type(3) {
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
+}
+
+.spinner div:nth-of-type(4) {
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
+}
+
+.spinner div:nth-of-type(5) {
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
+}
+
+.spinner div:nth-of-type(6) {
+  transform: translateZ(22px);
+}
+
+@keyframes spinner-y0fdc1 {
+  0% {
+    transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+  }
+
+  50% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+  }
+
+  100% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+  }
+}
+
+/* Changes for Dark Theme */
+header.dark {
+  background: #000;
+  color: #fff;
+}
+
+main.dark {
+  background: #000;
+}
+
+main.dark .app-info,
+main.dark .wave-editor {
+  box-shadow: 0px 3px 3px #ff6300, -21px -4px 15px #191919,
+    21px -4px 15px #191919;
+}
+
+main.dark .message-wrapper {
+  box-shadow: 20px 20px 60px #242424, -20px -20px 60px #1c1c1c;
 }
